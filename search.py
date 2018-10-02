@@ -87,47 +87,32 @@ def depthFirstSearch(problem):
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
 """
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    
+
     stack = util.Stack()
     visited = set()
-    parentDict = {}
-
+    path = list()
+    cost = 0
     # Start state
-    stack.push(problem.getStartState())
+    stack.push((problem.getStartState(), path, cost))
     
     while not stack.isEmpty():
-
-        actual = stack.pop()
+        actual, path, cost = stack.pop()
 
         # Reaches goal
         if problem.isGoalState(actual):
-
-            # Parent contains the parent node, the move used to get to the child and the cost
-            parent = parentDict[actual]
-            path = [parent[1]]  # We create a list with the movements used
-
-            # Getting path
-            while parent[0] != problem.getStartState(): # While we aren't at the start node
-                parent = parentDict[parent[0]]  # Assigning parent's parent
-                path.append(parent[1])          # Append the move used
-
-            return path[::-1]   # Reverse and return path
+            return path
 
         # Check if we already visited the node
         if actual not in visited:
-            visited.add(actual)     # If we didnt we add the node to the visited node's list
+            visited.add(actual)     # Add the node to the visited node list
 
             # Iterating on all the successors
             for successor in problem.getSuccessors(actual):
-                stack.push(successor[0])
+                newPath = path[:]
+                newPath.append(successor[1])    # Adding the new node to the path
 
-                # Checking if we didnt already put it in the parent dictionary
-                if successor[0] not in parentDict:
-                    parentDict[successor[0]] = (actual, successor[1])   # The key is the successor and the values are
-                                                                        # the parent and the movement
+                # Push the successor node alongside the path to get to it and the cost
+                stack.push((successor[0], newPath, cost+successor[2]))
 
 
 def breadthFirstSearch(problem):
