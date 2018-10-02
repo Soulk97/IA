@@ -44,6 +44,7 @@ import util
 import time
 import search
 
+
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
 
@@ -58,6 +59,7 @@ class GoWestAgent(Agent):
 # This portion is written for you, but will only work #
 #       after you fill in parts of search.py          #
 #######################################################
+
 
 class SearchAgent(Agent):
     """
@@ -103,6 +105,7 @@ class SearchAgent(Agent):
         self.searchType = globals()[prob]
         print('[SearchAgent] using problem type ' + prob)
 
+
     def registerInitialState(self, state):
         """
         This is the first time that the agent sees the layout of the game
@@ -135,6 +138,7 @@ class SearchAgent(Agent):
             return self.actions[i]
         else:
             return Directions.STOP
+
 
 class PositionSearchProblem(search.SearchProblem):
     """
@@ -229,6 +233,7 @@ class PositionSearchProblem(search.SearchProblem):
             cost += self.costFn((x,y))
         return cost
 
+
 class StayEastSearchAgent(SearchAgent):
     """
     An agent for position search with a cost function that penalizes being in
@@ -240,6 +245,7 @@ class StayEastSearchAgent(SearchAgent):
         self.searchFunction = search.uniformCostSearch
         costFn = lambda pos: .5 ** pos[0]
         self.searchType = lambda state: PositionSearchProblem(state, costFn, (1, 1), None, False)
+
 
 class StayWestSearchAgent(SearchAgent):
     """
@@ -253,11 +259,13 @@ class StayWestSearchAgent(SearchAgent):
         costFn = lambda pos: 2 ** pos[0]
         self.searchType = lambda state: PositionSearchProblem(state, costFn)
 
+
 def manhattanHeuristic(position, problem, info={}):
     "The Manhattan distance heuristic for a PositionSearchProblem"
     xy1 = position
     xy2 = problem.goal
     return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+
 
 def euclideanHeuristic(position, problem, info={}):
     "The Euclidean distance heuristic for a PositionSearchProblem"
@@ -268,6 +276,7 @@ def euclideanHeuristic(position, problem, info={}):
 #####################################################
 # This portion is incomplete.  Time to write code!  #
 #####################################################
+
 
 class CornersProblem(search.SearchProblem):
     """
@@ -365,11 +374,13 @@ def cornersHeuristic(state, problem):
     "*** YOUR CODE HERE ***"
     return 0 # Default to trivial solution
 
+
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
     def __init__(self):
         self.searchFunction = lambda prob: search.aStarSearch(prob, cornersHeuristic)
         self.searchType = CornersProblem
+
 
 class FoodSearchProblem:
     """
@@ -421,11 +432,13 @@ class FoodSearchProblem:
             cost += 1
         return cost
 
+
 class AStarFoodSearchAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
     def __init__(self):
         self.searchFunction = lambda prob: search.aStarSearch(prob, foodHeuristic)
         self.searchType = FoodSearchProblem
+
 
 def foodHeuristic(state, problem):
     """
@@ -459,12 +472,13 @@ def foodHeuristic(state, problem):
     "*** YOUR CODE HERE ***"
     return 0
 
+
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
     def registerInitialState(self, state):
         self.actions = []
         currentState = state
-        while(currentState.getFood().count() > 0):
+        while currentState.getFood().count() > 0:
             nextPathSegment = self.findPathToClosestDot(currentState) # The missing piece
             self.actions += nextPathSegment
             for action in nextPathSegment:
@@ -489,6 +503,7 @@ class ClosestDotSearchAgent(SearchAgent):
 
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
+
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -521,7 +536,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         The state is Pacman's position. Fill this in with a goal test that will
         complete the problem definition.
         """
-        x,y = state
+        x, y = state
 
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()

@@ -71,10 +71,11 @@ def tinyMazeSearch(problem):
     Returns a sequence of moves that solves tinyMaze.  For any other maze, the
     sequence of moves will be incorrect, so only use this for tinyMaze.
     """
-    #from game import Directions
+    # from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
+
 
 def depthFirstSearch(problem):
     """
@@ -90,36 +91,75 @@ def depthFirstSearch(problem):
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     
-    xd = util.Stack()
-    succ = problem.getSuccessors(problem.getStartState())
+    stack = util.Stack()
+    visited = set()
+    path = {}
+    pathStack = util.Stack()
+
+    # Start state
+    stack.push(problem.getStartState())
     
-    #Start state
-    xd.push(problem.getStartState())
-    
-    while not problem.isGoalState(actual):
-        
-    for s in succ:
-        xd.push(s)
-    
-    actual = xd.pop()
-    
-    print "goal", problem.isGoalState(actual[0])
-    
-    
-    print "\nstack:"
-    while not xd.isEmpty():
-        print xd.pop()
-    print "\n"
-    
-    
+    while not stack.isEmpty():
+
+        actual = stack.pop()
+
+        # Reaches goal
+        if problem.isGoalState(actual):
+            print "xd"
+            #node = actual
+            '''
+            while node != None:
+                pathStack.push(node)
+                print node
+                node = path[node]
+
+            finalPath = []
+            while not pathStack.isEmpty():
+                finalPath.append(pathStack.pop)
+
+                return finalPath
+            
+             while node[0] != problem.getStartState():
+                pathStack.push(node[1])
+            '''
+
+            final = []
+            node = problem.getStartState()
+
+            #while not problem.isGoalState(node):
+
+             #   final.append(node[1])
+              #  node = path[node][0]
+               # print(node)
+
+            node = path[problem.getStartState()]
+            final.append(node[1])
+            print node
+
+            node = path[node[0]]
+            final.append(node[1])
+            print path, "\n"
+            print "3,5", path[(3, 5)]
+            print "2,5", path[(2, 5)]
+            print "1,5", path[(1, 5)]
+            print "final", final
+            return [Directions.SOUTH]
+
+        if actual not in visited:
+            visited.add(actual)
+            for successor in problem.getSuccessors(actual):
+                stack.push(successor[0])
+                path[actual] = successor
+
     s = Directions.SOUTH
     w = Directions.WEST
     e = Directions.EAST
     n = Directions.NORTH
-    return  [s, s, w, s, w, w, s]
+    return [s, s, w, s, w, w, s]
     
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
