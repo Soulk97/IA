@@ -74,29 +74,18 @@ def tinyMazeSearch(problem):
     # from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
 
 
-def depthFirstSearch(problem):
-    """
-    Search the deepest nodes in the search tree first.
-
-    Your search algorithm needs to return a list of actions that reaches the
-    goal. Make sure to implement a graph search algorithm.
-
-    To get started, you might want to try some of these simple commands to
-    understand the search problem that is being passed in:
-"""
-
-    stack = util.Stack()
+def structureSearch(problem, structure):
     visited = set()
     path = list()
     cost = 0
     # Start state
-    stack.push((problem.getStartState(), path, cost))
+    structure.push((problem.getStartState(), path, cost))
     
-    while not stack.isEmpty():
-        actual, path, cost = stack.pop()
+    while not structure.isEmpty():
+        actual, path, cost = structure.pop()
 
         # Reaches goal
         if problem.isGoalState(actual):
@@ -112,18 +101,32 @@ def depthFirstSearch(problem):
                 newPath.append(successor[1])    # Adding the new node to the path
 
                 # Push the successor node alongside the path to get to it and the cost
-                stack.push((successor[0], newPath, cost+successor[2]))
+                structure.push((successor[0], newPath, cost+successor[2]))
+
+
+def depthFirstSearch(problem):
+    """
+    Search the deepest nodes in the search tree first.
+
+    Your search algorithm needs to return a list of actions that reaches the
+    goal. Make sure to implement a graph search algorithm.
+
+    To get started, you might want to try some of these simple commands to
+    understand the search problem that is being passed in:
+    """
+    return structureSearch(problem, util.Stack())
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return structureSearch(problem, util.Queue())
+
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -131,6 +134,7 @@ def nullHeuristic(state, problem=None):
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
     return 0
+
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
