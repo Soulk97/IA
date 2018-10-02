@@ -124,19 +124,25 @@ def depthFirstSearch(problem):
             '''
 
             final = []
-            node = problem.getStartState()
+            node = path[actual]
+            parent = node[0]
+            movement = node[1]
+            final.append(movement)
 
-            #while not problem.isGoalState(node):
+            while parent != problem.getStartState():
 
-             #   final.append(node[1])
-              #  node = path[node][0]
-               # print(node)
+                node = path[parent]
+                parent = node[0]
+                movement = node[1]
+                final.append(movement)
 
-            node = path[problem.getStartState()]
+            return final[::-1]
+
+            '''
             final.append(node[1])
             print node
 
-            node = path[node[0]]
+            node = path[node]
             final.append(node[1])
             print path, "\n"
             print "3,5", path[(3, 5)]
@@ -144,19 +150,23 @@ def depthFirstSearch(problem):
             print "1,5", path[(1, 5)]
             print "final", final
             return [Directions.SOUTH]
+            '''
 
+            print final
+            return [Directions.SOUTH]
         if actual not in visited:
             visited.add(actual)
             for successor in problem.getSuccessors(actual):
                 stack.push(successor[0])
-                path[actual] = successor
+                if successor[0] not in path:
+                    path[successor[0]] = (actual, successor[1])
 
     s = Directions.SOUTH
     w = Directions.WEST
     e = Directions.EAST
     n = Directions.NORTH
     return [s, s, w, s, w, w, s]
-    
+
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
 
