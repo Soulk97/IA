@@ -93,8 +93,7 @@ def depthFirstSearch(problem):
     
     stack = util.Stack()
     visited = set()
-    path = {}
-    pathStack = util.Stack()
+    parentDict = {}
 
     # Start state
     stack.push(problem.getStartState())
@@ -105,70 +104,30 @@ def depthFirstSearch(problem):
 
         # Reaches goal
         if problem.isGoalState(actual):
-            print "xd"
-            #node = actual
-            '''
-            while node != None:
-                pathStack.push(node)
-                print node
-                node = path[node]
 
-            finalPath = []
-            while not pathStack.isEmpty():
-                finalPath.append(pathStack.pop)
+            # Parent contains the parent node, the move used to get to the child and the cost
+            parent = parentDict[actual]
+            path = [parent[1]]  # We create a list with the movements used
 
-                return finalPath
-            
-             while node[0] != problem.getStartState():
-                pathStack.push(node[1])
-            '''
+            # Getting path
+            while parent[0] != problem.getStartState(): # While we aren't at the start node
+                parent = parentDict[parent[0]]  # Assigning parent's parent
+                path.append(parent[1])          # Append the move used
 
-            final = []
-            node = path[actual]
-            parent = node[0]
-            movement = node[1]
-            final.append(movement)
+            return path[::-1]   # Reverse and return path
 
-            while parent != problem.getStartState():
-
-                node = path[parent]
-                parent = node[0]
-                movement = node[1]
-                final.append(movement)
-
-            return final[::-1]
-
-            '''
-            final.append(node[1])
-            print node
-
-            node = path[node]
-            final.append(node[1])
-            print path, "\n"
-            print "3,5", path[(3, 5)]
-            print "2,5", path[(2, 5)]
-            print "1,5", path[(1, 5)]
-            print "final", final
-            return [Directions.SOUTH]
-            '''
-
-            print final
-            return [Directions.SOUTH]
+        # Check if we already visited the node
         if actual not in visited:
-            visited.add(actual)
+            visited.add(actual)     # If we didnt we add the node to the visited node's list
+
+            # Iterating on all the successors
             for successor in problem.getSuccessors(actual):
                 stack.push(successor[0])
-                if successor[0] not in path:
-                    path[successor[0]] = (actual, successor[1])
 
-    s = Directions.SOUTH
-    w = Directions.WEST
-    e = Directions.EAST
-    n = Directions.NORTH
-    return [s, s, w, s, w, w, s]
-
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+                # Checking if we didnt already put it in the parent dictionary
+                if successor[0] not in parentDict:
+                    parentDict[successor[0]] = (actual, successor[1])   # The key is the successor and the values are
+                                                                        # the parent and the movement
 
 
 def breadthFirstSearch(problem):
