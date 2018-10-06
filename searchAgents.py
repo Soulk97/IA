@@ -314,6 +314,7 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
+
         util.raiseNotDefined()
 
     def getSuccessors(self, state):
@@ -368,11 +369,17 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+    corners = problem.corners   # These are the corner coordinates
+    walls = problem.walls   # These are the walls of the maze, as a Grid (game.py)
+
+    remaining = []
+    for c in corners:
+        if c not in state[1]:
+            remaining.append(c)
+
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    return 0    # Default to trivial solution
 
 
 class AStarCornersAgent(SearchAgent):
