@@ -78,7 +78,7 @@ def tinyMazeSearch(problem):
 
 
 def structureSearch(problem, structure):
-    visited = set()
+    visited = list()
     path = list()
     cost = 0
     # Start state
@@ -93,11 +93,11 @@ def structureSearch(problem, structure):
 
         # Check if we already visited the node
         if actual not in visited:
-            visited.add(actual)     # Add the node to the visited node list
+            visited.append(actual)     # Add the node to the visited node list
 
             # Iterating on all the successors
             for successor in problem.getSuccessors(actual):
-                newPath = path[:]
+                newPath = list(path)
                 newPath.append(successor[1])    # Adding the new node to the path
 
                 # Push the successor node alongside the path to get to it and the cost
