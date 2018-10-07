@@ -383,18 +383,31 @@ def cornersHeuristic(state, problem):
     This function should always return a number that is a lower bound on the
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
+
+
+    We have to loop through every remaining corner
+    In the loop we get the minimum manhattan distance between the current node and the corners
+    the minimum distance gets added and the minimum distance corner becomes the new current node
+    then the node gets removed from the remaining corners list
     """
-    corners = problem.corners   # These are the corner coordinates
-    walls = problem.walls   # These are the walls of the maze, as a Grid (game.py)
+    # List the remaining corners
+    remaining = [c for c in problem.corners if c not in state[1]]
+    dist = 0
+    current = state[0]
+    while len(remaining) > 0:
+        # Getting min distance and the min distance node
+        minDist = 999
+        for r in remaining:
+            d = util.manhattanDistance(current, r)
+            if d <= minDist:
+                minDist = d
+                minNode = r
 
-    remaining = []
-    for c in corners:
-        if c not in state[1]:
-            remaining.append(c)
+        dist += minDist
+        remaining.remove(minNode)
+        current = minNode
 
-
-    "*** YOUR CODE HERE ***"
-    return 0    # Default to trivial solution
+    return dist
 
 
 class AStarCornersAgent(SearchAgent):

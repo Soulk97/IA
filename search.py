@@ -85,18 +85,18 @@ def structureSearch(problem, structure):
     structure.push((problem.getStartState(), path, cost))
     
     while not structure.isEmpty():
-        actual, path, cost = structure.pop()
+        current, path, cost = structure.pop()
 
         # Reaches goal
-        if problem.isGoalState(actual):
+        if problem.isGoalState(current):
             return path
 
         # Check if we already visited the node
-        if actual not in visited:
-            visited.append(actual)     # Add the node to the visited node list
+        if current not in visited:
+            visited.append(current)     # Add the node to the visited node list
 
             # Iterating on all the successors
-            for successor in problem.getSuccessors(actual):
+            for successor in problem.getSuccessors(current):
                 newPath = list(path)
                 newPath.append(successor[1])    # Adding the new node to the path
 
@@ -139,7 +139,7 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     structure = util.PriorityQueue()
-    visited = set()
+    visited = list()
     path = list()
     cost = 0
     heuristicCost = heuristic(problem.getStartState(), problem)
@@ -147,18 +147,18 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     structure.push((problem.getStartState(), path, cost), heuristicCost)
 
     while not structure.isEmpty():
-        actual, path, cost = structure.pop()
+        current, path, cost = structure.pop()
 
         # Reaches goal
-        if problem.isGoalState(actual):
+        if problem.isGoalState(current):
             return path
 
         # Check if we already visited the node
-        if actual not in visited:
-            visited.add(actual)     # Add the node to the visited node list
+        if current not in visited:
+            visited.append(current)     # Add the node to the visited node list
 
             # Iterating on all the successors
-            for successor in problem.getSuccessors(actual):
+            for successor in problem.getSuccessors(current):
                 newPath = path[:]
                 newPath.append(successor[1])    # Adding the new node to the path
                 next = successor[0]
