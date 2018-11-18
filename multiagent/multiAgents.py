@@ -135,37 +135,39 @@ class MinimaxAgent(MultiAgentSearchAgent):
           gameState.getNumAgents():
             Returns the total number of agents in the game
         """
-
-        numAgents = gameState.getNumAgents()
-
-        # We have to multiply the depth with the number of agents
-        # Because we need the depth for the pacman agent and for every ghost agent
-        depth = numAgents * self.depth
+        # We need the depth for the pacman agent and for every ghost agent
+        depth = self.depth * gameState.getNumAgents()
 
         result = []
         for action in gameState.getLegalActions(0):
             # For every legal action we have to get the minimax value from the successor
-            result.append((self.minimax(gameState.generateSuccessor(0, action), depth-1, 1, numAgents), action))
+            result.append((self.minimax(gameState.generateSuccessor(0, action), depth - 1, 1), action))
 
         # Return the action with max value
         return max(result)[1]
 
-    # minimax recursive algorithm, current is the current agent: pacman=0, ghosts>=1
-    # Depending on the current agent it will calculate the min or the max
-    def minimax(self, gameState, depth, current, numAgents):
-        # If we are in a terminal state we will return the utility state
-        # Terminal states are when the game is over and we get to the maximum depth
-        # if depth is 0 means we got to the maximum depth
+    """
+        Minimax recursive algorithm, current is the current agent: pacman=0, ghosts>=1
+        Depending on the current agent it will calculate the min or the max
+    """
+    def minimax(self, gameState, depth, current):
+        """
+            If we are in a terminal state we will return the utility state
+            Terminal states are when the game is over and we get to the maximum depth
+            if depth is 0 means we got to the maximum depth
+        """
         if depth <= 0 or gameState.isLose() or gameState.isWin():
             return self.evaluationFunction(gameState)
 
-        # For every legal action we have to get the minimax value from the successor
-        # We append them in a list so later we can get the min or max  depending on the current agent
+        """
+            For every legal action we have to get the minimax value from the successor
+            We append them in a list so later we can get the min or max  depending on the current agent
+        """
         result = []
-        next = (current + 1) % numAgents
+        next = (current + 1) % gameState.getNumAgents()
         for action in gameState.getLegalActions(current):
             # For every legal action we get the minimax value from the successor
-            result.append(self.minimax(gameState.generateSuccessor(current, action), depth - 1, next, numAgents))
+            result.append(self.minimax(gameState.generateSuccessor(current, action), depth - 1, next))
 
         # Pacman is 0, ghosts are >=1
         # We want max value for pacman and min for the ghosts
@@ -173,7 +175,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
             return max(result)
         else:               # Current is a ghost
             return min(result)
-
 
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
@@ -185,18 +186,18 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """
           Returns the minimax action using self.depth and self.evaluationFunction
         """
-        numAgents = gameState.getNumAgents()
-        alpha = -float('inf')
+        # We need the depth for the pacman agent and for every ghost agent
+        depth = self.depth * gameState.getNumAgents()
 
-        # We have to multiply the depth with the number of agents
-        # Because we need the depth for the pacman agent and for every ghost agent
-        depth = numAgents * self.depth
+        alpha = -float('inf')
 
         # Looking for the best possible action
         for action in gameState.getLegalActions(0):
-            # For every legal action we have to get the minimax value from the successor
-            # Alpha is the best value, beta is always +inf
-            v = self.alphaBeta(gameState.generateSuccessor(0, action), depth - 1, 1, numAgents, alpha, float('inf'))
+            """
+                For every legal action we have to get the minimax value from the successor
+                Alpha is the best value, beta is always +inf
+            """
+            v = self.alphaBeta(gameState.generateSuccessor(0, action), depth - 1, 1, alpha, float('inf'))
 
             # if the new value is better than the current best
             if v > alpha:
@@ -208,33 +209,32 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         return bestAction
 
 
-    def alphaBeta(self, gameState, depth, current, numAgents, alpha, beta):
-        # If we are in a terminal state we will return the utility state
-        # Terminal states are when the game is over and we get to the maximum depth
-        # if depth is 0 means we got to the maximum depth
+    def alphaBeta(self, gameState, depth, current, alpha, beta):
+        """
+            If we are in a terminal state we will return the utility state
+            Terminal states are when the game is over and we get to the maximum depth
+            if depth is 0 means we got to the maximum depth
+        """
         if depth <= 0 or gameState.isLose() or gameState.isWin():
             return self.evaluationFunction(gameState)
 
-        next = (current + 1) % numAgents
+        next = (current + 1) % gameState.getNumAgents()
         # Pacman is 0, ghosts are >=1
         # We want max value for pacman and min for the ghosts
-
-        # Max Value, current is pacman
-        if current == 0:
+        if current == 0:    # Max Value, current is pacman
             v = -float('inf')
             for action in gameState.getLegalActions(current):
                 # For every legal action we get the minimax value from the successor
-                v = max(v, self.alphaBeta(gameState.generateSuccessor(current, action), depth - 1, next, numAgents, alpha, beta))
+                v = max(v, self.alphaBeta(gameState.generateSuccessor(current, action), depth - 1, next, alpha, beta))
                 if v > beta: return v
                 alpha = max(alpha, v)
             return v
 
-        # Min Value, current is a ghost
-        else:
+        else:   # Min Value, current is a ghost
             v = float('inf')
             for action in gameState.getLegalActions(current):
                 # For every legal action we get the minimax value from the successor
-                v = min(v, self.alphaBeta(gameState.generateSuccessor(current, action), depth - 1, next, numAgents, alpha, beta))
+                v = min(v, self.alphaBeta(gameState.generateSuccessor(current, action), depth - 1, next, alpha, beta))
                 if v < alpha: return v
                 beta = min(beta, v)
             return v
@@ -242,6 +242,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
       Your expectimax agent (question 4)
+
     """
 
     def getAction(self, gameState):
@@ -250,45 +251,49 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
 
           All ghosts should be modeled as choosing uniformly at random from their
           legal moves.
-        """
-        "*** YOUR CODE HERE ***"
-        numAgents = gameState.getNumAgents()
 
-        # We have to multiply the depth with the number of agents
-        # Because we need the depth for the pacman agent and for every ghost agent
-        depth = numAgents * self.depth
+          getAction is the same as minimax
+        """
+        # We need the depth for the pacman agent and for every ghost agent
+        depth = self.depth * gameState.getNumAgents()
 
         result = []
         for action in gameState.getLegalActions(0):
             # For every legal action we have to get the minimax value from the successor
-            result.append((self.expectimax(gameState.generateSuccessor(0, action), depth-1, 1, numAgents), action))
+            result.append((self.expectimax(gameState.generateSuccessor(0, action), depth - 1, 1), action))
 
         # Return the action with max value
         return max(result)[1]
 
-    def expectimax(self, gameState, depth, current, numAgents):
-        # If we are in a terminal state we will return the utility state
-        # Terminal states are when the game is over and we get to the maximum depth
-        # if depth is 0 means we got to the maximum depth
+    """
+        Similar to minimax, we just have to change the ghost movement to calculate
+        the average value instead of the minimum value
+    """
+    def expectimax(self, gameState, depth, current):
+        """
+            If we are in a terminal state we will return the utility state
+            Terminal states are when the game is over and we get to the maximum depth
+            if depth is 0 means we got to the maximum depth
+        """
         if depth <= 0 or gameState.isLose() or gameState.isWin():
             return self.evaluationFunction(gameState)
 
-        # For every legal action we have to get the minimax value from the successor
-        # We append them in a list so later we can get the min or max  depending on the current agent
+        """
+            For every legal action we have to get the minimax value from the successor
+            We append them in a list so later we can get the min or max  depending on the current agent
+        """
         result = []
-        next = (current + 1) % numAgents
+        next = (current + 1) % gameState.getNumAgents()
         for action in gameState.getLegalActions(current):
             # For every legal action we get the minimax value from the successor
-            result.append(self.expectimax(gameState.generateSuccessor(current, action), depth - 1, next, numAgents))
+            result.append(self.expectimax(gameState.generateSuccessor(current, action), depth - 1, next))
 
         # Pacman is 0, ghosts are >=1
-        # We want max value for pacman and min for the ghosts
+        # We want to maximize for pacman and calculate the average for the ghosts
         if current == 0:    # Current is pacman
             return max(result)
-        else:               # Current is a ghost
-            numActions = len(gameState.getLegalActions(current))
-            beta = sum(result)
-            return float(beta/numActions)
+        else:   # Current is a ghost
+            return sum(result)/len(result) # Calculate the average
 
 def betterEvaluationFunction(currentGameState):
     """
