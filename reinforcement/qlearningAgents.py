@@ -43,7 +43,7 @@ class QLearningAgent(ReinforcementAgent):
         "You can initialize Q-values here..."
         ReinforcementAgent.__init__(self, **args)
         # Initializing Q-values counter
-        self.Q = util.Counter()
+        self.QValues = util.Counter()
 
     def getQValue(self, state, action):
         """
@@ -51,7 +51,7 @@ class QLearningAgent(ReinforcementAgent):
           Should return 0.0 if we have never seen a state
           or the Q node value otherwise
         """
-        return self.Q[(state,action)]
+        return self.QValues[(state,action)]
 
 
     def computeValueFromQValues(self, state):
@@ -65,12 +65,13 @@ class QLearningAgent(ReinforcementAgent):
         if not self.getLegalActions(state):
             return 0.0
 
-        # We append the Q from every action in the state
+        # Iterate all the legal actions
+        # Append the Qvalue from every action in the state
         actionList = []
         for action in self.getLegalActions(state):
             actionList.append(self.getQValue(state, action))
 
-        # Return the max value
+        # Return the maximum Qvalue
         return max(actionList)
 
 
@@ -122,7 +123,15 @@ class QLearningAgent(ReinforcementAgent):
           NOTE: You should never call this function,
           it will be called on your behalf
         """
-        self.Q[(state, action)] = (1 - self.alpha) * self.getQValue(state, action) + self.alpha * (reward + self.discount * self.computeValueFromQValues(nextState))
+        # First we calculate the learned value
+        # Consists in the reward plus the multiplication of the discount and
+        # the estimate of optimal future value that we get calling the
+        # compute value function of the next state
+        learnedValue = reward + self.discount * self.computeValueFromQValues(nextState)
+
+        # Then we get the old value multiplied by 1-alpha and we add
+        # alpha multiplied by the learned value that we just calculated
+        self.QValues[(state, action)] = (1 - self.alpha) * self.getQValue(state, action) + self.alpha * learnedValue
 
 
     def getPolicy(self, state):
